@@ -1,0 +1,9 @@
+duckdb:
+  outputs:
+    dev:
+      type: duckdb
+      path: './blnkst_user_eng.duckdb'
+      schema: 'analytics'
+      threads: 4
+
+  target: dev

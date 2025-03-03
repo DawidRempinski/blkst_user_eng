@@ -1,0 +1,21 @@
+version: 2
+
+sources:
+  - name: user_engagement
+    schema: raw
+    description: This source contains user interaction events from the web and mobile application. The events are captured in real-time and stored in the backend database. Older events are periodically removed.
+    meta:
+      external_location: "read_csv_auto('./raw/{name}.csv', header=1)"
+    tables:
+      - name: mobile_events
+        description: One record per user interaction event from the mobile app
+      - name: web_events
+        description: One record per user interaction event from the web
+    freshness:
+      warn_after:
+        count: 2
+        period: hour
+      # error_after:
+      #   count: 1
+      #   period: day
+    loaded_at_field: "arrival_timestamp"

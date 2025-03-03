@@ -1,0 +1,96 @@
+version: 2
+
+models:
+  - name: int_engagement_events
+    description: "Intermediate model unifying web and mobile events."
+    columns:
+      - name: event_id
+        description: "Unique identifier for the event."
+        tests:
+          - not_null
+          - unique
+
+      - name: event_type
+        description: "Type of event recorded."
+        tests:
+          - not_null
+
+      - name: session_id
+        description: "Unique identifier for the user session."
+        tests:
+          - not_null
+
+      - name: event_timestamp
+        description: "Timestamp when the event occurred."
+        tests:
+          - not_null
+
+      - name: user_id
+        description: "Unique identifier for the user."
+
+      - name: user_access_type
+        description: "User subscription level, distinguishing between free and premium access."
+        tests:
+          - accepted_values:
+              values: ['free', 'premium']
+              quote: true
+
+      - name: item_id
+        description: "Identifier of the associated item."
+
+      - name: item_type
+        description: "Type of the associated item."
+
+      - name: item_title
+        description: "Title of the associated item."
+
+      - name: user_country
+        description: "Country associated with the user at the time of the event."
+
+      - name: source_type
+        description: "Indicates whether the event was recorded from web or mobile."
+        tests:
+          - accepted_values:
+              values: ['web', 'app']
+              quote: true
+
+      - name: event_year
+        description: "Year extracted from the event timestamp."
+        tests:
+          - not_null
+
+      - name: event_month
+        description: "Month extracted from the event timestamp."
+        tests:
+          - not_null
+
+      - name: event_date
+        description: "Date extracted from the event timestamp."
+        tests:
+          - not_null
+
+      - name: event_day_of_week
+        description: "Day of the week extracted from the event timestamp."
+
+      - name: event_is_weekend
+        description: "Indicates if the event occurred on a weekend (1 = Yes, 0 = No)."
+        tests:
+          - accepted_values:
+              values: [0, 1]
+
+      - name: event_hour
+        description: "Hour of the day extracted from the event timestamp (0-23)."
+        tests:
+          - not_null
+
+      - name: session_start
+        description: "Timestamp of when the user session started."
+
+      - name: session_end
+        description: "Timestamp of when the user session ended."
+
+      - name: session_has_interacted
+        description: "Indicates if the session included user interaction (1 = Yes, 0 = No)."
+        tests:
+          - accepted_values:
+              values: [0, 1]

@@ -1,0 +1,174 @@
+version: 2
+
+models:
+  - name: stg_web_events
+    description: "Staging table for raw web event data from the tracking system."
+    tests:
+      - dbt_expectations.expect_column_pair_values_A_to_be_greater_than_B:
+          column_A: arrival_timestamp
+          column_B: event_timestamp
+          or_equal: True
+      - dbt_utils.expression_is_true:
+              expression: "event_timestamp < current_date"
+
+    columns:
+      - name: event_id
+        description: "Unique identifier for the event."
+        tests:
+          - unique
+          - not_null
+
+      - name: event_type
+        description: "Type of event recorded."
+        tests:
+          - not_null
+
+      - name: session_id
+        description: "Unique identifier for the user session."
+        tests:
+          - not_null
+
+      - name: event_timestamp
+        description: "Timestamp when the event occurred."
+        tests:
+          - not_null
+
+      - name: arrival_timestamp
+        description: "Timestamp when the event was received in the backend."
+        tests:
+          - not_null
+
+      - name: user_id
+        description: "Unique identifier for the user."
+
+      - name: user_access_type
+        description: "User subscription level, distinguishing between free and premium access."
+        tests:
+          - accepted_values:
+              values: ['free', 'premium']
+              quote: true
+
+      - name: item_id
+        description: "Identifier of the associated item."
+
+      - name: item_type
+        description: "Type of the associated item."
+
+      - name: item_title
+        description: "Title of the associated item."
+
+      - name: browser_name
+        description: "Name of the browser used."
+
+      - name: browser_version
+        description: "Version of the browser used."
+
+      - name: screen_resolution
+        description: "Screen resolution of the user’s device."
+
+      - name: cookies_enabled
+        description: "Indicates whether cookies are enabled."
+        tests:
+          - accepted_values:
+              values: [0, 1]
+
+      - name: device_type
+        description: "Type of device used."
+
+      - name: language
+        description: "Browser language setting."
+
+      - name: country_code
+        description: "Country code based on IP or browser settings."
+        tests:
+          - dbt_expectations.expect_column_values_to_match_regex:
+              regex: "^[A-Z]{2}$"
+
+  - name: stg_mobile_events
+    description: "Staging table for raw mobile event data from the tracking system."
+    tests:
+      - dbt_expectations.expect_column_pair_values_A_to_be_greater_than_B:
+          column_A: arrival_timestamp
+          column_B: event_timestamp
+          or_equal: True
+      - dbt_utils.expression_is_true:
+              expression: "event_timestamp < current_date"
+
+    columns:
+      - name: event_id
+        description: "Unique identifier for the event."
+        tests:
+          - unique
+          - not_null
+
+      - name: event_type
+        description: "Type of event recorded."
+        tests:
+          - not_null
+
+      - name: session_id
+        description: "Unique identifier for the user session."
+        tests:
+          - not_null
+
+      - name: event_timestamp
+        description: "Timestamp when the event occurred."
+        tests:
+          - not_null
+          
+      - name: arrival_timestamp
+        description: "Timestamp when the event was received in the backend."
+        tests:
+          - not_null
+
+      - name: user_id
+        description: "Unique identifier for the user."
+
+      - name: user_access_type
+        description: "User subscription level, distinguishing between free and premium access."
+        tests:
+          - accepted_values:
+              values: ['free', 'premium']
+              quote: true
+
+      - name: item_id
+        description: "Identifier of the associated item."
+
+      - name: item_type
+        description: "Type of the associated item."
+
+      - name: item_title
+        description: "Title of the associated item."
+
+      - name: device_locale_code
+        description: "Full locale code of the device."
+
+      - name: device_locale_country
+        description: "Country associated with the device locale."
+        tests:
+          - dbt_expectations.expect_column_values_to_match_regex:
+              regex: "^[A-Z]{2}$"
+
+      - name: device_locale_language
+        description: "Language associated with the device locale."
+
+      - name: device_make
+        description: "Manufacturer of the mobile device."
+
+      - name: device_platform_name
+        description: "Operating system of the device."
+
+      - name: device_platform_version
+        description: "Version of the device's operating system."
+        tests:
+          - dbt_expectations.expect_column_values_to_match_regex:
+              regex: "^\\d+(\\.\\d+)*$"
+              row_condition: "device_platform_version IS NOT NULL"
+              is_raw: true
+
+      - name: app_version
+        description: "Version of the mobile application used."
+
+      - name: client_id
+
+      - name: client_cognito_id

@@ -1,0 +1,77 @@
+version: 2
+
+models:
+  - name: fct_engagement_daily
+    description: "Daily engagement metrics summarizing user activity and content interactions."
+    tests:
+      - dbt_expectations.expect_column_values_to_be_within_n_stdevs:
+          column_name: daily_active_users
+          sigma_threshold: 3
+          group_by: ['date']
+      - dbt_expectations.expect_column_values_to_be_within_n_stdevs:
+          column_name: daily_active_learners
+          sigma_threshold: 3
+          group_by: ['date']
+      - dbt_expectations.expect_column_pair_values_A_to_be_greater_than_B:
+          column_A: daily_active_users
+          column_B: daily_active_learners
+          or_equal: True
+
+    columns:
+      - name: date
+        description: "Date for which the engagement metrics are recorded."
+        tests:
+          - not_null
+          - unique
+          - dbt_expectations.expect_column_values_to_be_increasing: 
+              strictly: False 
+
+      - name: daily_active_users
+        description: "Total number of unique active users on the given date."
+        tests:
+          - not_null
+
+      - name: daily_active_learners
+        description: "Total number of unique users who interacted with content on the given date."
+        tests:
+          - not_null
+
+      - name: content_completions_web
+        description: "Total number of content completions recorded via the web platform."
+        tests:
+          - not_null
+              
+      - name: daily_active_users_dach
+        description: "Total number of unique active app users from the DACH region (Germany, Austria, Switzerland)."
+        tests:
+          - not_null   
+
+  - name: fct_engagement_timeframes
+    description: "Aggregated engagement metrics over different time periods."
+
+    columns:
+      - name: aggregation_period
+        description: "Time period for aggregation."
+        tests:
+          - not_null
+          - unique
+
+      - name: daily_active_users
+        description: "Total number of unique active users within the aggregation period."
+        tests:
+          - not_null
+
+      - name: daily_active_learners
+        description: "Total number of unique users who interacted with content within the aggregation period."
+        tests:
+          - not_null
+  
+      - name: content_completions_web
+        description: "Total number of content completions recorded via the web platform within the aggregation period."
+        tests:
+          - not_null
+
+      - name: daily_active_users_dach
+        description: "Total number of unique active app users from the DACH region (Germany, Austria, Switzerland) within the aggregation period."
+        tests:
+          - not_null
